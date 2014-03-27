@@ -4,11 +4,14 @@ public class Edge {
     private int id;
     private Node node1;
     private Node node2;
+    private int weight;
 
     public Edge(int id, Node node1, Node node2) {
         this.node1 = node1;
         this.node2 = node2;
         this.id = id;
+        // by default start with 1
+        this.weight = 1;
     }
 
     public Node getOtherNode(Node node) {
@@ -62,27 +65,41 @@ public class Edge {
         this.node2 = node2;
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		result = prime * result + ((node1 == null) ? 0 : node1.hashCode()) + ((node2 == null) ? 0 : node2.hashCode());
-		return result;
-	}
+    /**
+     * @return the weight
+     */
+    public int getWeight() {
+        return weight;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Edge other = (Edge) obj;
-		if (id != other.id)
-			return false;
-		
-		return true;
-	}
+    /**
+     * @param weight the weight to set
+     */
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        result = prime * result + ((node1 == null) ? 0 : node1.hashCode()) + ((node2 == null) ? 0 : node2.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Edge other = (Edge) obj;
+        if (id != other.id)
+            return false;
+        
+        return true;
+    }
 }

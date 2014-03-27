@@ -7,6 +7,7 @@ import br.com.lealdn.grafo.input.FileReader;
 import br.com.lealdn.grafo.traverse.BFS;
 import br.com.lealdn.grafo.traverse.AbstractAdjMatrixTraverse;
 import br.com.lealdn.grafo.traverse.FloydWarshall;
+import br.com.lealdn.grafo.traverse.Johnson;
 import br.com.lealdn.grafo.traverse.RepeatedSquaring;
 import br.com.lealdn.grafo.visualization.View;
 
@@ -32,11 +33,18 @@ public class Start {
         //View.view(rs.getNodes());
         
         FloydWarshall fw = new FloydWarshall(nodes);
-        while (fw.getNumberOfCommunities() < 3) {
+        while (fw.getNumberOfCommunities() < 4) {
             fw.findMostUsedEdgeAndRemoveIt();
         }
 
         View.view(fw.getNodes());
+        
+        //Johnson johnson = new Johnson(nodes);
+        //while (johnson.getNumberOfCommunities() < 4) {
+        //    johnson.findMostUsedEdgeAndRemoveIt();
+        //}
+
+        //View.view(johnson.getNodes());
     }
 
 }

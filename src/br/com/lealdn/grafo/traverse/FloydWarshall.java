@@ -61,7 +61,7 @@ public class FloydWarshall extends AbstractAdjMatrixTraverse {
         }
     }
 
-    class EdgeList extends ArrayList<Edge> {}
+    class EdgeList extends ArrayList<Edge> {private static final long serialVersionUID = 1L;}
     private List<Edge> initializeEdgePath(List<Edge> edgePath) {
         if (edgePath == null) {
             edgePath = new EdgeList();
