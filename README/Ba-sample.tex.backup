@@ -1,0 +1,98 @@
+\documentclass[a4paper,11pt,oneside]{article}
+
+% $Id: ba-sample.tex 952 2006-03-06 20:14:35Z schoenw $
+
+% To use this template, you have to have a halfway complete LaTeX
+% installation and you have to run pdflatex, followed by bibtex,
+% following by one-two more pdflatex runs.
+%
+% Note thad usimg a spel chequer (e.g. ispell, aspell) is generolz
+% a very guud ideo.
+
+\usepackage{times}		%% native times roman fonts
+\usepackage{parskip}		%% blank lines between paragraphs, no indent
+\usepackage[pdftex]{graphicx}	%% include graphics, preferrably pdf
+\usepackage[pdftex]{hyperref}	%% many PDF options can be set here
+\pdfadjustspacing=1		%% force LaTeX-like character spacing
+
+\hypersetup{
+  pdfauthor = {Jos\'e Leal Domingues Neto},
+  pdftitle = {Entregável TP1},
+  pdfkeywords = {tp1}
+}
+
+\begin{document}
+
+  \thispagestyle{empty}
+
+  \begin{flushleft}
+    \textbf{\huge TP1 - Grafos}
+  \end{flushleft}
+  \vspace*{6mm}
+  \begin{flushleft}
+    \textbf{\large Jos\'e Leal Domingues Neto}\\[2ex]
+  \end{flushleft}
+  \vspace*{1mm}
+  \begin{flushleft}
+    \textit{
+      Date: \today \\
+      PAA \\
+      DCC - UFMG}
+  \end{flushleft}
+  \vspace*{2mm}
+
+\newpage
+
+  \section{Algoritmos}
+    \subsection{BFS}
+    O BFS foi implementado de acordo com o algoritmo do livro. Um detalhe e dificuldade em particular foi como implementar o histórico de arestas visitadas. Como esse dado não \'e normalmente dado pelo algoritmo, foi implementado um Map{\textless}Node, List{\textless}Edge{\textgreater}{\textgreater} onde para cada n\'o a aresta visitada era adicionada, justamente com todas as arestas visitadas do n\'o anterior. O BFS est\'a implementado na BFS.java, e implementa a interface AllPairs.
+    
+    \subsubsection{Big-O}
+    Runtime: \begin{math}O(V + E)\end{math} para o BFS, \begin{math}O(V)\end{math} para cada n\'o, o que \'e \begin{math}O(V * (V + E))\end{math}. Mas como temos \begin{math}O(E)\end{math} dentro do for para procurar a aresta de menor peso, temos \begin{math}O(V * (V + 2*E))\end{math}. \\
+    =\textgreater \begin{math}O(V*E)\end{math} \\\\
+    Mem\'oria: Começamos com \begin{math}O(V+E)\end{math} para lista de adjacência. Porem adicionalmente guardamos os caminhos, que é \begin{math}O(V * E)\end{math}. \\
+    =\textgreater \begin{math}O(V * E)\end{math}
+    
+    \subsection{Repeated Squaring}
+    A parte te\'orica foi baseada no livro, com m\'inimas modifi\c{c}\~oes na implementa\c{c}\~ao em si. \'E utilizada a matrix de adjac\^encia para guardar e calcular o RS. Para guardar os caminhos m\'inimos, utiliza-se o uma matrix de listas List{\textless}Edge\textgreater[][] para guardar para cada \textbf{i} e \textbf{j} no algoritmo. Como antes, adiciona-se todas as arestas do n\'o anterior mais a seguinte. Ela implementa a interface AllPairs e extende a classe AbstractAdjMatrixTraverse que \'e dividida com o Floyd-Warshall.
+    \subsubsection{Big-O}
+    Runtime: \begin{math} O(V^4) \end{math} para o RS. \\
+    =\textgreater \begin{math}O(V^4)\end{math} \\\\
+    Mem\'oria: Come\c{c}amos com \begin{math}O(V^2) \end{math} para a matrix de adjac\^encia. Porem adicionalmente guardamos os caminhos para cada \textbf{i} e \textbf{j}, que é \begin{math}O(V^2 * E)\end{math}. \\
+    =\textgreater \begin{math}O(V^2 * E)\end{math}
+    
+
+    \subsection{Floyd-Warshal}
+    Para o Floyd-Warshall muito da metodologia foi reutilizada do RS para implementar o algoritmo. J\'a que tudo como matrix de adjac\^encia j\'a havia sido feito, foi criado uma classe que os dois compartilharam a AbstractAdjMatrixTraverse. Com o Floyd-Warshall, também foi usado uma matrix de arestas para cada \textbf{i} e \textbf{j}.
+    \subsubsection{Big-O}
+    Runtime: \begin{math} O(V^3) \end{math} para o Floyd-Warshall. \\
+    =\textgreater \begin{math}O(V^3)\end{math} \\\\
+    Mem\'oria: Começamos com \begin{math}O(V^2) \end{math} para a matrix de adjac\^encia. Porem adicionalmente guardamos os caminhos para cada \textbf{i} e \textbf{j}, que é \begin{math}O(V^2 * E)\end{math}. \\
+    =\textgreater \begin{math}O(V^2 * E)\end{math}
+    
+    \subsection{Johnson}
+    O algoritmo de Johnson \'e complexo por haver a necessidade de implementar v'arios algoritmos em um s\'o. Ou seja, foi implementado o Dijkstra juntamente com Bellman-Ford que n\~ao possuem f\'acil l\'ogica. Para aumentar a complexidade, h\'a a necessidade de repesar os pesos dos n\'os ap\'os o Bellman-Ford. Para sua implementa\c{c}\~ao O j foi usada uma lista de adjac\^encia contando os caminhos encontrados em um mapa Map{\textless}Node, List{\textless}Edge{\textgreater}{\textgreater} para cada n\'o. Ap\'os isso, a conta das arestas utilizadas \'e feita e o betweeness \'e determinado.
+    \subsubsection{Big-O}
+    Runtime: \begin{math} O(V^2 lg V) \end{math} para o Johnson com HEAP, \begin{math} O(V^3) \end{math} para o Johnson com List,  \\
+    =\textgreater \begin{math}O(V^3)\end{math} \\\\
+    Mem\'oria: Come\c{c}amos com \begin{math}O(V+E)\end{math} para lista de adjacência. Porem adicionalmente guardamos os caminhos, que é \begin{math}O(V * E)\end{math}. \\
+    =\textgreater \begin{math}O(V * E)\end{math}
+    
+    \section{Johnson vs. Floyd-Warshall}
+    Os dois algoritmos cumprem o mesmo trabalho, porém o algoritmo de Johnson é mais recomendado quando se lida com grafos do tipo sparse. Como pode-se usar um algoritmo mais r\'apido para determinar o menor caminho nos casos de poucas arestas, evita-se o uso do Floyd-Warshall.
+    
+    \section{Tempo de execução e memória}
+    Alguns testes foram feitos, e temos os seguintes resultados.\\\\
+    \includegraphics[width=1.1\textwidth]{../res/dolphins-40.jpg}\\
+    Este exemplo foi rodado em um grafo teoricamente pequeno o dolphin.gml. Ele possui por volta de 100 nós.\\
+    Como podemos ver, o algoritmo de Repeated Squaring possui um tempo de execução muito maior do que os outros. Mesmo neste exemplo, onde o eixo Y é dado em milisegundos, vemos que já se torna impossível rodarmos o algoritmo com eficiência. Temos a seguir um exemplo com um tempo de execução maior:\\
+    \includegraphics[width=1.1\textwidth]{../res/adjnoun-90.jpg}\\
+    Este exemplo foi rodado no grafo adjnoun.gml, que é um pouco maior, contendo 110 nós.\\
+    Como vemos, o RS rodou por mais de 3 minutos, enquanto os outros algoritmos demoraram menos de 30 segundos.
+    
+ 
+  \bibliographystyle{unsrt}
+  \bibliography{Ba-sample}
+
+
+\end{document}
