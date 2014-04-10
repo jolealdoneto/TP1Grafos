@@ -4,8 +4,10 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import br.com.lealdn.grafo.elements.Node;
 import br.com.lealdn.grafo.elements.Edge;
@@ -24,22 +26,35 @@ public abstract class AbstractAdjMatrixTraverse {
         return nodes.indexOf(node);
     }
 
-    public int getNumberOfCommunities() {
+    public List<List<Node>> getCommunities() {
         BFS bfs = new BFS(this.nodes);
-        return bfs.getNumberOfCommunities();
+        return bfs.getCommunities();
     }
 
-    protected Edge findMostUsedEdgeGiveEdgeList(List<Edge>[][] pathsForEachNode) {
+    public Set<Integer> createSet(final Integer node1, final Integer node2) {
+        return new HashSet<Integer>() {{
+            add(node1);
+            add(node2);
+        }};
+    }
+
+    protected Map.Entry<Edge, Integer> findMostUsedEdgeGiveEdgeList(List<Edge>[][] pathsForEachNode) {
         Map<Edge, Integer> edgeCount = new HashMap<Edge, Integer>();
+        Set<Set<Integer>> alreadyCounted = new HashSet<Set<Integer>>();
         for (int i = 0; i < this.nodes.size(); i++) {
             for (int j = 0; j < this.nodes.size(); j++) {
                 if (pathsForEachNode[i][j] != null) {
-                    for (Edge edge : pathsForEachNode[i][j]) {
-                        if (!edgeCount.containsKey(edge)) {
-                            edgeCount.put(edge, 0);
-                        }
+                    Set<Integer> nodeSet = createSet(i, j);
+                    if (!alreadyCounted.contains(nodeSet)) {
+                        alreadyCounted.add(nodeSet);
 
-                        edgeCount.put(edge, edgeCount.get(edge) + 1);
+                        for (Edge edge : pathsForEachNode[i][j]) {
+                            if (!edgeCount.containsKey(edge)) {
+                                edgeCount.put(edge, 0);
+                            }
+
+                            edgeCount.put(edge, edgeCount.get(edge) + 1);
+                        }
                     }
                 }
             }
@@ -52,7 +67,7 @@ public abstract class AbstractAdjMatrixTraverse {
             }
         }
         if (maxRow.getKey() != null) {
-            return maxRow.getKey();
+            return maxRow;
         }
         return null;
     }

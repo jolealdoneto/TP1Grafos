@@ -1,27 +1,28 @@
 package br.com.lealdn.grafo.traverse;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-
 import java.util.Random;
 import java.util.Set;
 
 import br.com.lealdn.grafo.elements.Edge;
 import br.com.lealdn.grafo.elements.Node;
 
-public class Johnson {
+public class Johnson implements AllPairs {
     private List<Node> nodes;
     private Map<Edge, Integer> edgeCount;
+    private Dijkstra.Datastructure datastructure;
 
     public Johnson(List<Node> nodes) {
+        this(nodes, Dijkstra.Datastructure.LIST);
+    }
+
+    public Johnson(List<Node> nodes, Dijkstra.Datastructure datastructure) {
         this.nodes = new ArrayList<Node>(nodes);
+        this.datastructure = datastructure;
     }
 
 
@@ -51,7 +52,7 @@ public class Johnson {
         nodes.remove(toRemove);
     }
 
-    public void findMostUsedEdgeAndRemoveIt() {
+    public Map.Entry<Edge, Integer> findMostUsedEdgeAndRemoveIt() {
         doJohnson();
 
         Map.Entry<Edge, Integer> maxRow = null;
@@ -67,36 +68,48 @@ public class Johnson {
         }
 
         if (maxRow != null) {
-            System.out.println("Most used: " + maxRow.getKey().getNode1().getId() + "->" + maxRow.getKey().getNode2().getId());
             maxRow.getKey().removeEdge();
         }
+        return maxRow;
     }
 
-    public int getNumberOfCommunities() {
+    public List<List<Node>> getCommunities() {
         BFS bfs = new BFS(this.nodes);
-        return bfs.getNumberOfCommunities();
+        return bfs.getCommunities();
     }
 
+
+    public Set<Node> createSet(final Node node1, final Node node2) {
+        return new HashSet<Node>() {{
+            add(node1);
+            add(node2);
+        }};
+    }
 
     public boolean doJohnson() {
         Node extraVertex = addNewSVertex(nodes);
         BellmanFord bf = new BellmanFord(nodes);
+        Set<Set<Node>> alreadyCounted = new HashSet<Set<Node>>();
 
         if (bf.doBellmanFord(extraVertex)) {
             recalculateWeights(nodes);
             removeNode(nodes, extraVertex);
 
             edgeCount = new HashMap<Edge, Integer>();
-            Dijkstra dijkstra = new Dijkstra(nodes);
+            Dijkstra dijkstra = new Dijkstra(nodes, this.datastructure);
             for (Node node : nodes) {
                 dijkstra.doDijkstra(node);
                 for (Map.Entry<Node, List<Edge>> path : dijkstra.getEdgePath().entrySet()) {
-                    for (Edge edge : path.getValue()) {
-                        if (!edgeCount.containsKey(edge)) {
-                            edgeCount.put(edge, 0);
-                        }
+                    Set<Node> nodeSet = createSet(node, path.getKey());
+                    if (!alreadyCounted.contains(nodeSet)) {
+                        alreadyCounted.add(nodeSet);
+                        for (Edge edge : path.getValue()) {
+                            if (!edgeCount.containsKey(edge)) {
+                                edgeCount.put(edge, 0);
+                            }
 
-                        edgeCount.put(edge, edgeCount.get(edge) + 1);
+                            edgeCount.put(edge, edgeCount.get(edge) + 1);
+                        }
                     }
                 }
             }

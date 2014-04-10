@@ -2,11 +2,12 @@ package br.com.lealdn.grafo.traverse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import br.com.lealdn.grafo.elements.Edge;
 import br.com.lealdn.grafo.elements.Node;
 
-public class FloydWarshall extends AbstractAdjMatrixTraverse {
+public class FloydWarshall extends AbstractAdjMatrixTraverse implements AllPairs {
     private List<Edge>[][] pathsForEachNode;
 
     public FloydWarshall(List<Node> nodes) {
@@ -53,12 +54,13 @@ public class FloydWarshall extends AbstractAdjMatrixTraverse {
         return adjMatrix;
     }
 
-    public void findMostUsedEdgeAndRemoveIt() {
+    public Map.Entry<Edge, Integer> findMostUsedEdgeAndRemoveIt() {
         doFloydWarshall();
-        Edge edge = findMostUsedEdgeGiveEdgeList(this.pathsForEachNode);
-        if (edge != null) {
-            edge.removeEdge();
+        Map.Entry<Edge, Integer> row = findMostUsedEdgeGiveEdgeList(this.pathsForEachNode);
+        if (row != null) {
+            row.getKey().removeEdge();
         }
+        return row;
     }
 
     class EdgeList extends ArrayList<Edge> {private static final long serialVersionUID = 1L;}

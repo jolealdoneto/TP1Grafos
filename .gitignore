@@ -4,3 +4,9 @@
 *.swo
 *.swp
 bin/
+input/
+tp1.jar
+.metadata/
+.swm
+.swn
+eclimd.log

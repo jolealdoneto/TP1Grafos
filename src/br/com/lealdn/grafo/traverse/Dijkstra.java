@@ -12,9 +12,18 @@ import br.com.lealdn.grafo.elements.Node;
 
 public class Dijkstra extends AbstractSingleSourceTraverse {
     private Map<Node, List<Edge>> edgePath;
+    private Datastructure datastructure;
+
+    public static enum Datastructure {
+        LIST, HEAP
+    }
 
     public Dijkstra(List<Node> nodes) {
+        this(nodes, Datastructure.LIST);
+    }
+    public Dijkstra(List<Node> nodes, Datastructure datastructure) {
         super(nodes);
+        this.datastructure = datastructure;
     }
 
     interface Extratable<T> {
@@ -60,11 +69,21 @@ public class Dijkstra extends AbstractSingleSourceTraverse {
         }
     }
 
+    public Extratable<Node> getStructure(List<Node> nodes) {
+        switch (this.datastructure) {
+            case LIST:
+                return new ExtratableArrayList(nodes);
+            case HEAP:
+                return new ExtratablePriorityQueue(nodes);
+        }
+        return null;
+    }
+
     public void doDijkstra(Node root) {
         edgePath = new HashMap<Node, List<Edge>>();
 
         initializeSingleSource(root);
-        Extratable<Node> extratable = new ExtratableArrayList(this.nodes);
+        Extratable<Node> extratable = getStructure(this.nodes);
 
         while (!extratable.isEmpty()) {
             Node node = extratable.extractMin();
@@ -82,17 +101,17 @@ public class Dijkstra extends AbstractSingleSourceTraverse {
             }
         }
 
-        System.out.println("----------");
-        System.out.println("root: " + root.getId());
-        for (Map.Entry<Node, List<Edge>> row : edgePath.entrySet()) {
-            System.out.println("----------");
-            System.out.println("row: " + row.getKey().getId());
-            for (Edge edge : row.getValue()) {
-                System.out.println("edge: " + edge.getNode1().getId() + "->" + edge.getNode2().getId());
-            }
-        }
-        
-        System.out.println();
+        //System.out.println("----------");
+        //System.out.println("root: " + root.getId());
+        //for (Map.Entry<Node, List<Edge>> row : edgePath.entrySet()) {
+        //    System.out.println("----------");
+        //    System.out.println("row: " + row.getKey().getId());
+        //    for (Edge edge : row.getValue()) {
+        //        System.out.println("edge: " + edge.getNode1().getId() + "->" + edge.getNode2().getId());
+        //    }
+        //}
+        //
+        //System.out.println();
     }
 
     /**

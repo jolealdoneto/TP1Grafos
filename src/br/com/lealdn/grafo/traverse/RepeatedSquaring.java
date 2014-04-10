@@ -8,7 +8,7 @@ import java.util.Map;
 import br.com.lealdn.grafo.elements.Node;
 import br.com.lealdn.grafo.elements.Edge;
 
-public class RepeatedSquaring extends AbstractAdjMatrixTraverse {
+public class RepeatedSquaring extends AbstractAdjMatrixTraverse implements AllPairs {
     private List<Edge>[][] pathsForEachNode;
 
     public RepeatedSquaring(List<Node> nodes) {
@@ -27,12 +27,13 @@ public class RepeatedSquaring extends AbstractAdjMatrixTraverse {
         return adjMatrix;
     }
 
-    public void findMostUsedEdgeAndRemoveIt() {
+    public Map.Entry<Edge, Integer> findMostUsedEdgeAndRemoveIt() {
         doRepeatedSquaring();
-        Edge edge = findMostUsedEdgeGiveEdgeList(this.pathsForEachNode);
-        if (edge != null) {
-            edge.removeEdge();
+        Map.Entry<Edge, Integer> row = findMostUsedEdgeGiveEdgeList(this.pathsForEachNode);
+        if (row != null) {
+            row.getKey().removeEdge();
         }
+        return row;
     }
 
     private Integer[][] extendSP(Integer[][] adjMatrix, Integer[][] weightMatrix) {

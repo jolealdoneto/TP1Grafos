@@ -4,15 +4,17 @@ import java.awt.Color;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import br.com.lealdn.grafo.elements.Edge;
 import br.com.lealdn.grafo.elements.Node;
 
-public class BFS {
+public class BFS implements AllPairs {
     private List<Node> nodes;
     private Map<Node, List<Edge>> edgePath;
 
@@ -88,21 +90,36 @@ public class BFS {
         return edgeCount;
     }
 
-    public void findMostUsedEdgeAndRemoveIt() {
+    public Set<Node> createSet(final Node node1, final Node node2) {
+        return new HashSet<Node>() {{
+            add(node1);
+            add(node2);
+        }};
+    }
+
+    public Map.Entry<Edge, Integer> findMostUsedEdgeAndRemoveIt() {
         Map<Edge, Integer> edgeCount = new HashMap<Edge, Integer>();
+        Set<Set<Node>> alreadyCounted = new HashSet<Set<Node>>();
         for (Node node : this.nodes) {
             Map<Edge, Integer> localCount = doBFS(node);
+            for (Map.Entry<Node, List<Edge>> targetNodePath : edgePath.entrySet()) {
+                Set<Node> nodeSet = createSet(node, targetNodePath.getKey());
+                if (!alreadyCounted.contains(nodeSet)) {
+                    alreadyCounted.add(nodeSet);
 
-            for (Map.Entry<Edge, Integer> row : localCount.entrySet()) {
-                if (!edgeCount.containsKey(row.getKey())) {
-                    edgeCount.put(row.getKey(), 0);
+                    for (Edge edge : targetNodePath.getValue()) {
+                        if (!edgeCount.containsKey(edge)) {
+                            edgeCount.put(edge, 0);
+                        }
+                        edgeCount.put(edge, edgeCount.get(edge) + 1);
+                    }
                 }
-                edgeCount.put(row.getKey(), edgeCount.get(row.getKey()) + row.getValue());
             }
         }
         
         Map.Entry<Edge, Integer> maxEntry = new AbstractMap.SimpleEntry<Edge, Integer>(null, 0);
         for (Map.Entry<Edge, Integer> row : edgeCount.entrySet()) {
+            //System.out.println(row.getKey().getNode1().getId() + "-" + row.getKey().getNode2().getId() + ": " + row.getValue());
             if (maxEntry.getValue() < row.getValue()) {
                 maxEntry = new AbstractMap.SimpleEntry<Edge, Integer>(row);
             }
@@ -111,18 +128,19 @@ public class BFS {
         if (maxEntry.getKey() != null) {
             maxEntry.getKey().removeEdge();
         }
+        return maxEntry;
     }
 
-    public int getNumberOfCommunities() {
+    public List<List<Node>> getCommunities() {
         List<Node> nodes = new ArrayList<Node>(this.nodes);
-        int communityNumber = 0;
+        List<List<Node>> communities = new ArrayList<List<Node>>();
         while(!nodes.isEmpty()) {
             Node node = nodes.get(0);
             doBFS(node);
+            communities.add(new ArrayList<Node>(this.edgePath.keySet()));
             nodes.removeAll(this.edgePath.keySet());
-            communityNumber++;
         }
 
-        return communityNumber;
+        return communities;
     }
 }
